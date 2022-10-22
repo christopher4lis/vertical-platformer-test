@@ -1,9 +1,16 @@
 class Player extends Sprite {
-  constructor({ collisionBlocks = [], imageSrc, frameRate, animations, loop }) {
-    super({ imageSrc, frameRate, animations, loop })
+  constructor({
+    collisionBlocks = [],
+    imageSrc,
+    frameRate,
+    animations,
+    loop,
+    scale,
+  }) {
+    super({ imageSrc, frameRate, animations, loop, scale })
     this.position = {
       x: 130,
-      y: 340,
+      y: 240,
     }
 
     this.velocity = {
@@ -34,10 +41,6 @@ class Player extends Sprite {
   }
 
   update() {
-    // this is the blue box
-    // c.fillStyle = 'rgba(0, 0, 255, 0.5)'
-    // c.fillRect(this.position.x, this.position.y, this.width, this.height)
-
     this.position.x += this.velocity.x
     this.camera.position.x = this.position.x - 60
     this.camera.position.y = this.position.y
@@ -51,7 +54,6 @@ class Player extends Sprite {
       this.camera.position.y + this.camera.height + this.velocity.y >=
       this.camera.offset.y + canvas.height / 4
     ) {
-      console.log('lol')
       this.camera.offset.y += this.velocity.y
       camera.position.y -= this.velocity.y
     }
@@ -60,9 +62,14 @@ class Player extends Sprite {
 
     this.checkForHorizontalCollisions()
     this.applyGravity()
-
     this.updateHitbox()
+    this.checkForVerticalCollisions()
 
+    // box of fully-cropped image
+    // c.fillStyle = 'rgba(0, 0, 255, 0.5)'
+    // c.fillRect(this.position.x, this.position.y, this.width, this.height)
+
+    // // camera box
     // c.fillStyle = 'rgba(0, 255, 0, 0.05)'
     // c.fillRect(
     //   this.camera.position.x,
@@ -71,6 +78,7 @@ class Player extends Sprite {
     //   this.camera.height
     // )
 
+    // // hit box
     // c.fillStyle = 'rgba(255, 0, 0, 0.5)'
     // c.fillRect(
     //   this.hitbox.position.x,
@@ -78,7 +86,6 @@ class Player extends Sprite {
     //   this.hitbox.width,
     //   this.hitbox.height
     // )
-    this.checkForVerticalCollisions()
   }
 
   handleInput({ keys }) {
@@ -134,12 +141,16 @@ class Player extends Sprite {
   updateHitbox() {
     this.hitbox = {
       position: {
-        x: this.position.x + 28,
-        y: this.position.y + 25,
+        x: this.position.x + this.width / 2 - 11.25,
+        y: this.position.y + this.height - 28,
       },
       width: 22.5,
       height: 56 / 2,
     }
+
+    // width / 8 == width of one image
+    // width of one image / 2 = center of one image
+    // center of image - width of character / 2 = horizontal centered hitbox
   }
 
   checkForHorizontalCollisions() {

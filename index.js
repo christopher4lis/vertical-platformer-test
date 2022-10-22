@@ -8,32 +8,33 @@ let parsedCollisions
 let collisionBlocks
 let background
 const player = new Player({
-  imageSrc: './img/king2/idle.png',
+  scale: 0.5,
+  imageSrc: './img/warrior/Idle.png',
   frameRate: 8,
   animations: {
     idleRight: {
       frameRate: 8,
       frameBuffer: 8,
       loop: true,
-      imageSrc: './img/king2/idle.png',
+      imageSrc: './img/warrior/Idle.png',
     },
     idleLeft: {
       frameRate: 8,
       frameBuffer: 8,
       loop: true,
-      imageSrc: './img/king2/idleLeft.png',
+      imageSrc: './img/warrior/Idle.png',
     },
     runRight: {
       frameRate: 8,
       frameBuffer: 8,
       loop: true,
-      imageSrc: './img/king2/runRight.png',
+      imageSrc: './img/warrior/Run.png',
     },
     runLeft: {
       frameRate: 8,
       frameBuffer: 8,
       loop: true,
-      imageSrc: './img/king2/runLeft.png',
+      imageSrc: './img/warrior/Run.png',
     },
   },
 })
@@ -84,7 +85,7 @@ c.scale(4, 4)
 const camera = {
   position: {
     x: 0,
-    y: -576 / 2,
+    y: -376 / 2,
   },
 }
 function animate() {
