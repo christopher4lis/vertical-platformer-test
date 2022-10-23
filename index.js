@@ -81,26 +81,32 @@ const overlay = {
   opacity: 0,
 }
 
-c.scale(4, 4)
 const camera = {
   position: {
     x: 0,
-    y: -376 / 2,
+    y: -199,
+    // y: 0,
   },
 }
+
+// x: 256
+// y: 144
+// 0 - 320
+
 function animate() {
   window.requestAnimationFrame(animate)
 
   c.save()
+  c.scale(4, 4)
   c.translate(camera.position.x, camera.position.y)
   background.draw()
-  // collisionBlocks.forEach((collisionBlock) => {
-  //   collisionBlock.draw()
-  // })
+  collisionBlocks.forEach((collisionBlock) => {
+    collisionBlock.draw()
+  })
 
-  // platformBlocks.forEach((collisionBlock) => {
-  //   collisionBlock.draw()
-  // })
+  platformBlocks.forEach((collisionBlock) => {
+    collisionBlock.draw()
+  })
 
   player.handleInput({ keys, camera })
   player.draw()

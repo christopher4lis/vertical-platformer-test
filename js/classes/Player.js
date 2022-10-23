@@ -9,7 +9,7 @@ class Player extends Sprite {
   }) {
     super({ imageSrc, frameRate, animations, loop, scale })
     this.position = {
-      x: 130,
+      x: 80,
       y: 240,
     }
 
@@ -26,7 +26,7 @@ class Player extends Sprite {
     this.collisionBlocks = collisionBlocks
     this.platformCollisions = platformCollisions
 
-    this.camera = {
+    this.camerabox = {
       position: {
         x: this.position.x,
         y: this.position.y - 45,
@@ -42,21 +42,6 @@ class Player extends Sprite {
 
   update() {
     this.position.x += this.velocity.x
-    this.camera.position.x = this.position.x - 60
-    this.camera.position.y = this.position.y
-
-    if (this.camera.position.y + this.velocity.y <= this.camera.offset.y) {
-      this.camera.offset.y += this.velocity.y
-      camera.position.y -= this.velocity.y
-    }
-
-    if (
-      this.camera.position.y + this.camera.height + this.velocity.y >=
-      this.camera.offset.y + canvas.height / 4
-    ) {
-      this.camera.offset.y += this.velocity.y
-      camera.position.y -= this.velocity.y
-    }
 
     this.updateHitbox()
 
@@ -65,27 +50,46 @@ class Player extends Sprite {
     this.updateHitbox()
     this.checkForVerticalCollisions()
 
+    this.camerabox.position.x = this.position.x - 60
+    this.camerabox.position.y = this.position.y
+
+    if (
+      this.camerabox.position.y + this.velocity.y <=
+      this.camerabox.offset.y
+    ) {
+      this.camerabox.offset.y += this.velocity.y
+      camera.position.y -= this.velocity.y
+    }
+
+    if (
+      this.camerabox.position.y + this.camerabox.height + this.velocity.y >=
+      this.camerabox.offset.y + canvas.height / 4
+    ) {
+      this.camerabox.offset.y += this.velocity.y
+      camera.position.y -= this.velocity.y
+    }
+
     // box of fully-cropped image
-    // c.fillStyle = 'rgba(0, 0, 255, 0.5)'
-    // c.fillRect(this.position.x, this.position.y, this.width, this.height)
+    c.fillStyle = 'rgba(0, 0, 255, 0.5)'
+    c.fillRect(this.position.x, this.position.y, this.width, this.height)
 
     // // camera box
-    // c.fillStyle = 'rgba(0, 255, 0, 0.05)'
-    // c.fillRect(
-    //   this.camera.position.x,
-    //   this.camera.position.y,
-    //   this.camera.width,
-    //   this.camera.height
-    // )
+    c.fillStyle = 'rgba(0, 255, 0, 0.05)'
+    c.fillRect(
+      this.camerabox.position.x,
+      this.camerabox.position.y,
+      this.camerabox.width,
+      this.camerabox.height
+    )
 
     // // hit box
-    // c.fillStyle = 'rgba(255, 0, 0, 0.5)'
-    // c.fillRect(
-    //   this.hitbox.position.x,
-    //   this.hitbox.position.y,
-    //   this.hitbox.width,
-    //   this.hitbox.height
-    // )
+    c.fillStyle = 'rgba(255, 0, 0, 0.5)'
+    c.fillRect(
+      this.hitbox.position.x,
+      this.hitbox.position.y,
+      this.hitbox.width,
+      this.hitbox.height
+    )
   }
 
   handleInput({ keys }) {
@@ -94,34 +98,39 @@ class Player extends Sprite {
     this.velocity.x = 0
     if (keys.d.pressed) {
       this.switchSprite('runRight')
-      this.velocity.x = 1
+      this.velocity.x = 4
       this.lastDirection = 'right'
 
-      if (
-        this.camera.position.x + this.camera.width + this.velocity.x >=
-          canvas.width / 4 + this.camera.offset.x &&
-        this.camera.offset.x < canvas.width / 4
-      ) {
-        this.camera.offset.x++
-        camera.position.x -= 1
+      // right side of image minus offset
+      if (this.hitbox.position.x + this.hitbox.width + this.velocity.x > 576) {
+        const offset =
+          this.hitbox.position.x - this.position.x + this.hitbox.width
+        this.position.x = 576 - offset - this.velocity.x
+        return
       }
+
+      const right = this.camerabox.position.x + this.camerabox.width
+      console.log(right)
+      if (right > canvas.width / 4 - camera.position.x && right < 576) {
+        camera.position.x -= 4
+      }
+
+      // console.log(camera.position.x)
     } else if (keys.a.pressed) {
       this.switchSprite('runLeft')
-      this.velocity.x = -1
+      this.velocity.x = -4
       this.lastDirection = 'left'
 
-      if (this.hitbox.position.x + this.velocity.x <= 0) {
-        const offset = this.hitbox.position.x - this.position.x
-        this.position.x = 0 - offset + 0.01
-      }
+      if (this.hitbox.position.x + this.velocity.x <= 0)
+        this.position.x = this.position.x - this.hitbox.position.x
 
       if (
-        this.camera.position.x + this.velocity.x <= 0 + this.camera.offset.x &&
-        this.camera.offset.x > 0
+        this.camerabox.position.x < 0 - camera.position.x &&
+        this.camerabox.position.x > 0
       ) {
-        this.camera.offset.x--
-        camera.position.x += 1
+        camera.position.x += 4
       }
+      console.log(camera.position.x)
     } else {
       if (this.lastDirection === 'left') this.switchSprite('idleLeft')
       else this.switchSprite('idleRight')
