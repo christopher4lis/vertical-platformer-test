@@ -36,6 +36,18 @@ const player = new Player({
       loop: true,
       imageSrc: './img/warrior/Run.png',
     },
+    jump: {
+      frameRate: 2,
+      frameBuffer: 8,
+      loop: true,
+      imageSrc: './img/warrior/Jump.png',
+    },
+    fall: {
+      frameRate: 2,
+      frameBuffer: 3,
+      loop: true,
+      imageSrc: './img/warrior/Fall.png',
+    },
   },
 })
 
@@ -100,13 +112,13 @@ function animate() {
   c.scale(4, 4)
   c.translate(camera.position.x, camera.position.y)
   background.draw()
-  collisionBlocks.forEach((collisionBlock) => {
-    collisionBlock.draw()
-  })
+  // collisionBlocks.forEach((collisionBlock) => {
+  //   collisionBlock.draw()
+  // })
 
-  platformBlocks.forEach((collisionBlock) => {
-    collisionBlock.draw()
-  })
+  // platformBlocks.forEach((collisionBlock) => {
+  //   collisionBlock.draw()
+  // })
 
   player.handleInput({ keys, camera })
   player.update()

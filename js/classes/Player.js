@@ -53,8 +53,27 @@ class Player extends Sprite {
     this.camerabox.position.x = this.position.x - 60
     this.camerabox.position.y = this.position.y
 
-    if (this.camerabox.position.y > 0) {
+    // going up
+    if (
+      this.camerabox.position.y + this.velocity.y < -camera.position.y &&
+      this.camerabox.position.y + this.velocity.y > 0
+    ) {
       camera.position.y -= this.velocity.y
+    }
+
+    // going down
+    // console.log({
+    //   camera:
+    //     this.camerabox.position.y + this.camerabox.height + this.velocity.y,
+    //   camera2: -camera.position.y + canvas.height / 4,
+    // })
+    if (
+      this.camerabox.position.y + this.camerabox.height + this.velocity.y >
+      -camera.position.y + canvas.height / 4
+    ) {
+      camera.position.y -= this.velocity.y
+
+      console.log('go')
     }
 
     // if (
@@ -66,26 +85,26 @@ class Player extends Sprite {
     // }
 
     // box of fully-cropped image
-    c.fillStyle = 'rgba(0, 0, 255, 0.5)'
-    c.fillRect(this.position.x, this.position.y, this.width, this.height)
+    // c.fillStyle = 'rgba(0, 0, 255, 0.5)'
+    // c.fillRect(this.position.x, this.position.y, this.width, this.height)
 
     // // camera box
-    c.fillStyle = 'rgba(0, 255, 0, 0.05)'
-    c.fillRect(
-      this.camerabox.position.x,
-      this.camerabox.position.y,
-      this.camerabox.width,
-      this.camerabox.height
-    )
+    // c.fillStyle = 'rgba(0, 255, 0, 0.05)'
+    // c.fillRect(
+    //   this.camerabox.position.x,
+    //   this.camerabox.position.y,
+    //   this.camerabox.width,
+    //   this.camerabox.height
+    // )
 
     // // hit box
-    c.fillStyle = 'rgba(255, 0, 0, 0.5)'
-    c.fillRect(
-      this.hitbox.position.x,
-      this.hitbox.position.y,
-      this.hitbox.width,
-      this.hitbox.height
-    )
+    // c.fillStyle = 'rgba(255, 0, 0, 0.5)'
+    // c.fillRect(
+    //   this.hitbox.position.x,
+    //   this.hitbox.position.y,
+    //   this.hitbox.width,
+    //   this.hitbox.height
+    // )
   }
 
   handleInput({ keys }) {
@@ -95,21 +114,23 @@ class Player extends Sprite {
     if (keys.d.pressed) {
       this.switchSprite('runRight')
       this.lastDirection = 'right'
-      this.velocity.x = 4
+      this.velocity.x = 2
 
       this.checkForRightCanvasCollision()
       this.checkIfShouldPanCameraLeft()
     } else if (keys.a.pressed) {
       this.switchSprite('runLeft')
-      this.velocity.x = -4
+      this.velocity.x = -2
       this.lastDirection = 'left'
       this.checkForLeftCanvasCollision()
       this.checkIfShouldPanCameraRight()
-    } else {
+    } else if (this.velocity.y === 0) {
       if (this.lastDirection === 'left') this.switchSprite('idleLeft')
       else this.switchSprite('idleRight')
     }
-    // console.log(camera.position.x)
+
+    if (this.velocity.y < 0) this.switchSprite('jump')
+    else if (this.velocity.y > 0) this.switchSprite('fall')
   }
 
   checkForRightCanvasCollision() {
