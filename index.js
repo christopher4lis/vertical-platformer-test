@@ -84,7 +84,7 @@ const overlay = {
 const camera = {
   position: {
     x: 0,
-    y: -199,
+    y: -200,
     // y: 0,
   },
 }
@@ -109,8 +109,8 @@ function animate() {
   })
 
   player.handleInput({ keys, camera })
-  player.draw()
   player.update()
+  player.draw()
 
   c.save()
   c.globalAlpha = overlay.opacity

@@ -53,21 +53,17 @@ class Player extends Sprite {
     this.camerabox.position.x = this.position.x - 60
     this.camerabox.position.y = this.position.y
 
-    if (
-      this.camerabox.position.y + this.velocity.y <=
-      this.camerabox.offset.y
-    ) {
-      this.camerabox.offset.y += this.velocity.y
+    if (this.camerabox.position.y > 0) {
       camera.position.y -= this.velocity.y
     }
 
-    if (
-      this.camerabox.position.y + this.camerabox.height + this.velocity.y >=
-      this.camerabox.offset.y + canvas.height / 4
-    ) {
-      this.camerabox.offset.y += this.velocity.y
-      camera.position.y -= this.velocity.y
-    }
+    // if (
+    //   this.camerabox.position.y + this.camerabox.height + this.velocity.y >=
+    //   this.camerabox.offset.y + canvas.height / 4
+    // ) {
+    //   this.camerabox.offset.y += this.velocity.y
+    //   camera.position.y -= this.velocity.y
+    // }
 
     // box of fully-cropped image
     c.fillStyle = 'rgba(0, 0, 255, 0.5)'
@@ -98,42 +94,57 @@ class Player extends Sprite {
     this.velocity.x = 0
     if (keys.d.pressed) {
       this.switchSprite('runRight')
-      this.velocity.x = 4
       this.lastDirection = 'right'
+      this.velocity.x = 4
 
-      // right side of image minus offset
-      if (this.hitbox.position.x + this.hitbox.width + this.velocity.x > 576) {
-        const offset =
-          this.hitbox.position.x - this.position.x + this.hitbox.width
-        this.position.x = 576 - offset - this.velocity.x
-        return
-      }
-
-      const right = this.camerabox.position.x + this.camerabox.width
-      console.log(right)
-      if (right > canvas.width / 4 - camera.position.x && right < 576) {
-        camera.position.x -= 4
-      }
-
-      // console.log(camera.position.x)
+      this.checkForRightCanvasCollision()
+      this.checkIfShouldPanCameraLeft()
     } else if (keys.a.pressed) {
       this.switchSprite('runLeft')
       this.velocity.x = -4
       this.lastDirection = 'left'
-
-      if (this.hitbox.position.x + this.velocity.x <= 0)
-        this.position.x = this.position.x - this.hitbox.position.x
-
-      if (
-        this.camerabox.position.x < 0 - camera.position.x &&
-        this.camerabox.position.x > 0
-      ) {
-        camera.position.x += 4
-      }
-      console.log(camera.position.x)
+      this.checkForLeftCanvasCollision()
+      this.checkIfShouldPanCameraRight()
     } else {
       if (this.lastDirection === 'left') this.switchSprite('idleLeft')
       else this.switchSprite('idleRight')
+    }
+    // console.log(camera.position.x)
+  }
+
+  checkForRightCanvasCollision() {
+    if (this.hitbox.position.x + this.hitbox.width >= 576) {
+      const xOffset =
+        this.hitbox.position.x - this.position.x + this.hitbox.width
+      this.position.x = 576 - xOffset
+      this.velocity.x = 0
+    }
+  }
+
+  checkIfShouldPanCameraLeft() {
+    const scaledCanvasWidth = canvas.width / 4
+    const hitBoxRightSide =
+      this.camerabox.position.x + this.camerabox.width + this.velocity.x
+    if (
+      hitBoxRightSide >= scaledCanvasWidth - camera.position.x &&
+      hitBoxRightSide < 576
+    ) {
+      camera.position.x -= this.velocity.x
+    }
+  }
+
+  checkForLeftCanvasCollision() {
+    if (this.hitbox.position.x <= 0)
+      this.position.x =
+        this.position.x - this.hitbox.position.x - this.velocity.x
+  }
+
+  checkIfShouldPanCameraRight() {
+    if (
+      this.camerabox.position.x < 0 - camera.position.x &&
+      this.camerabox.position.x > 0
+    ) {
+      camera.position.x -= this.velocity.x
     }
   }
 
@@ -151,7 +162,7 @@ class Player extends Sprite {
     this.hitbox = {
       position: {
         x: this.position.x + this.width / 2 - 11.25,
-        y: this.position.y + this.height - 28,
+        y: this.position.y + this.height - 31,
       },
       width: 22.5,
       height: 56 / 2,
